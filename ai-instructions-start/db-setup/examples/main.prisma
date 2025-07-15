@@ -1,0 +1,21 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// TODO: Configure the generator block
+// - What provider should you use?
+// - Where should the client be generated?
+generator client {
+  provider = "prisma-client-js"
+  output   = "../prisma-client" // Think about the path structure
+}
+
+// TODO: Configure the datasource block
+// - What database provider are you using for development?
+// - Where should the database file be located?
+datasource db {
+  provider = "sqlite" // Consider what you'll use for production
+  url      = "file:../dev.db" // Think about the relative path
+}
+
+// HINT: The multi-file schema feature automatically reads all .prisma files
+// in the db/schemas/ directory, so you don't need to import them here. 

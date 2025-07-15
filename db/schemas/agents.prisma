@@ -1,0 +1,35 @@
+// ============================================================================
+// AGENT MODELS
+// ============================================================================
+
+model Agent {
+  id                String      @id
+  codename          String      @unique
+  status            AgentStatus @default(STANDBY)
+  riskLevel         RiskLevel   @default(MEDIUM)
+  location          String?
+  lastSeen          DateTime?
+  missionsCompleted Int         @default(0)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  // Relations
+  operations AgentOperation[]
+  activities AgentActivity[]
+
+  @@map("agents")
+}
+
+model AgentActivity {
+  id        String   @id @default(cuid())
+  agentId   String
+  action    String
+  location  String?
+  timestamp DateTime @default(now())
+  details   String?
+
+  // Relations
+  agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@map("agent_activities")
+}

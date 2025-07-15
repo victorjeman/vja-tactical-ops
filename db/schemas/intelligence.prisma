@@ -1,0 +1,19 @@
+// ============================================================================
+// INTELLIGENCE MODELS
+// ============================================================================
+
+model IntelligenceReport {
+  id             String              @id
+  title          String
+  classification ClassificationLevel @default(CONFIDENTIAL)
+  source         IntelligenceSource
+  location       String?
+  threatLevel    RiskLevel           @default(MEDIUM)
+  status         ReportStatus        @default(PENDING)
+  content        String
+  tags           String // JSON array of tags
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  @@map("intelligence_reports")
+}

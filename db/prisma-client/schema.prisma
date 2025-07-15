@@ -1,0 +1,238 @@
+// ============================================================================
+// AGENT MODELS
+// ============================================================================
+
+model Agent {
+  id                String      @id
+  codename          String      @unique
+  status            AgentStatus @default(STANDBY)
+  riskLevel         RiskLevel   @default(MEDIUM)
+  location          String?
+  lastSeen          DateTime?
+  missionsCompleted Int         @default(0)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  // Relations
+  operations AgentOperation[]
+  activities AgentActivity[]
+
+  @@map("agents")
+}
+
+model AgentActivity {
+  id        String   @id @default(cuid())
+  agentId   String
+  action    String
+  location  String?
+  timestamp DateTime @default(now())
+  details   String?
+
+  // Relations
+  agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@map("agent_activities")
+}
+
+// ============================================================================
+// COMMON ENUMS AND TYPES
+// ============================================================================
+
+enum AgentStatus {
+  ACTIVE
+  STANDBY
+  TRAINING
+  COMPROMISED
+  DECEASED
+}
+
+enum RiskLevel {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum OperationStatus {
+  PLANNING
+  ACTIVE
+  COMPLETED
+  COMPROMISED
+  ABORTED
+}
+
+enum PriorityLevel {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum ClassificationLevel {
+  TOP_SECRET
+  SECRET
+  CONFIDENTIAL
+  UNCLASSIFIED
+}
+
+enum IntelligenceSource {
+  SIGINT
+  HUMINT
+  OSINT
+  DIPLOMATIC
+  TECHNICAL
+}
+
+enum ReportStatus {
+  VERIFIED
+  PENDING
+  ACTIVE
+  ARCHIVED
+}
+
+enum SystemStatus {
+  ONLINE
+  WARNING
+  MAINTENANCE
+  OFFLINE
+}
+
+enum SystemType {
+  PRIMARY_SERVER
+  DATABASE
+  FIREWALL
+  NETWORK
+  STORAGE
+  PROCESSING
+}
+
+enum UserRole {
+  ADMIN
+  OPERATOR
+  ANALYST
+  VIEWER
+}
+
+// ============================================================================
+// INTELLIGENCE MODELS
+// ============================================================================
+
+model IntelligenceReport {
+  id             String              @id
+  title          String
+  classification ClassificationLevel @default(CONFIDENTIAL)
+  source         IntelligenceSource
+  location       String?
+  threatLevel    RiskLevel           @default(MEDIUM)
+  status         ReportStatus        @default(PENDING)
+  content        String
+  tags           String // JSON array of tags
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  @@map("intelligence_reports")
+}
+
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../dev.db"
+}
+
+// ============================================================================
+// OPERATION MODELS
+// ============================================================================
+
+model Operation {
+  id         String          @id
+  name       String
+  status     OperationStatus @default(PLANNING)
+  priority   PriorityLevel   @default(MEDIUM)
+  location   String
+  progress   Int             @default(0)
+  objectives String // JSON array of objectives
+  startDate  DateTime?
+  endDate    DateTime?
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+
+  // Relations
+  agents AgentOperation[]
+
+  @@map("operations")
+}
+
+model AgentOperation {
+  id          String   @id @default(cuid())
+  agentId     String
+  operationId String
+  assignedAt  DateTime @default(now())
+  role        String?
+
+  // Relations
+  agent     Agent     @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  operation Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
+
+  @@unique([agentId, operationId])
+  @@map("agent_operations")
+}
+
+// ============================================================================
+// SYSTEM MODELS
+// ============================================================================
+
+model System {
+  id        String       @id
+  name      String
+  type      SystemType
+  status    SystemStatus @default(ONLINE)
+  health    Int          @default(100)
+  cpu       Int          @default(0)
+  memory    Int          @default(0)
+  storage   Int          @default(0)
+  uptime    String       @default("0 days")
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@map("systems")
+}
+
+// ============================================================================
+// USER MODELS
+// ============================================================================
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  role      UserRole @default(VIEWER)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  sessions Session[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}

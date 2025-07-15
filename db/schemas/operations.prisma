@@ -1,0 +1,37 @@
+// ============================================================================
+// OPERATION MODELS
+// ============================================================================
+
+model Operation {
+  id         String          @id
+  name       String
+  status     OperationStatus @default(PLANNING)
+  priority   PriorityLevel   @default(MEDIUM)
+  location   String
+  progress   Int             @default(0)
+  objectives String // JSON array of objectives
+  startDate  DateTime?
+  endDate    DateTime?
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+
+  // Relations
+  agents AgentOperation[]
+
+  @@map("operations")
+}
+
+model AgentOperation {
+  id          String   @id @default(cuid())
+  agentId     String
+  operationId String
+  assignedAt  DateTime @default(now())
+  role        String?
+
+  // Relations
+  agent     Agent     @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  operation Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
+
+  @@unique([agentId, operationId])
+  @@map("agent_operations")
+}

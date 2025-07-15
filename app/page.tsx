@@ -1,23 +1,27 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ChevronRight, Monitor, Settings, Shield, Target, Users, Bell, RefreshCw } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import CommandCenterPage from "./command-center/page"
-import AgentNetworkPage from "./agent-network/page"
-import OperationsPage from "./operations/page"
-import IntelligencePage from "./intelligence/page"
-import SystemsPage from "./systems/page"
+import { useState } from "react";
+import { ChevronRight, Monitor, Settings, Shield, Target, Users, Bell, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import CommandCenterPage from "./(design)/command-center/page";
+import AgentNetworkPage from "./(design)/agent-network/page";
+import OperationsPage from "./(design)/operations/page";
+import IntelligencePage from "./(design)/intelligence/page";
+import SystemsPage from "./(design)/systems/page";
 
 export default function TacticalDashboard() {
-  const [activeSection, setActiveSection] = useState("overview")
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [activeSection, setActiveSection] = useState("overview");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
       <div
-        className={`${sidebarCollapsed ? "w-16" : "w-70"} bg-neutral-900 border-r border-neutral-700 transition-all duration-300 fixed md:relative z-50 md:z-auto h-full md:h-auto ${!sidebarCollapsed ? "md:block" : ""}`}
+        className={`${
+          sidebarCollapsed ? "w-16" : "w-70"
+        } bg-neutral-900 border-r border-neutral-700 transition-all duration-300 fixed md:relative z-50 md:z-auto h-full md:h-auto ${
+          !sidebarCollapsed ? "md:block" : ""
+        }`}
       >
         <div className="p-4">
           <div className="flex items-center justify-between mb-8">
@@ -32,7 +36,9 @@ export default function TacticalDashboard() {
               className="text-neutral-400 hover:text-orange-500"
             >
               <ChevronRight
-                className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform ${sidebarCollapsed ? "" : "rotate-180"}`}
+                className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform ${
+                  sidebarCollapsed ? "" : "rotate-180"
+                }`}
               />
             </Button>
           </div>
@@ -90,11 +96,13 @@ export default function TacticalDashboard() {
               TACTICAL COMMAND / <span className="text-orange-500">OVERVIEW</span>
             </div>
           </div>
+
           <div className="flex items-center gap-4">
             <div className="text-xs text-neutral-500">LAST UPDATE: 05/06/2025 20:00 UTC</div>
             <Button variant="ghost" size="icon" className="text-neutral-400 hover:text-orange-500">
               <Bell className="w-4 h-4" />
             </Button>
+
             <Button variant="ghost" size="icon" className="text-neutral-400 hover:text-orange-500">
               <RefreshCw className="w-4 h-4" />
             </Button>
@@ -111,5 +119,5 @@ export default function TacticalDashboard() {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,0 +1,68 @@
+// ============================================================================
+// COMMON ENUMS AND TYPES
+// ============================================================================
+
+// TODO: Define enums for your tactical operations system
+// Think about what states and categories you need for each entity
+
+// QUESTION: What states can a field agent be in?
+// Consider: active missions, training, compromised, etc.
+enum AgentStatus {
+  // TODO: Add your agent status values
+  // Examples: ACTIVE, STANDBY, TRAINING, COMPROMISED, DECEASED
+}
+
+// QUESTION: How do you categorize risk levels?
+// Consider: critical, high, medium, low
+enum RiskLevel {
+  // TODO: Add your risk level values
+}
+
+// QUESTION: What phases does an operation go through?
+// Consider: planning, active, completed, compromised, aborted
+enum OperationStatus {
+  // TODO: Add your operation status values
+}
+
+// QUESTION: How do you prioritize operations?
+enum PriorityLevel {
+  // TODO: Add your priority level values
+}
+
+// QUESTION: What classification levels do you need for intelligence?
+// Consider: top secret, secret, confidential, unclassified
+enum ClassificationLevel {
+  // TODO: Add your classification level values
+}
+
+// QUESTION: What sources of intelligence do you track?
+// Consider: signals intelligence, human intelligence, open source, etc.
+enum IntelligenceSource {
+  // TODO: Add your intelligence source values
+}
+
+// QUESTION: What states can intelligence reports be in?
+enum ReportStatus {
+  // TODO: Add your report status values
+}
+
+// QUESTION: How do you monitor system health?
+enum SystemStatus {
+  // TODO: Add your system status values
+}
+
+// QUESTION: What types of systems do you monitor?
+// Consider: servers, databases, firewalls, networks, etc.
+enum SystemType {
+  // TODO: Add your system type values
+}
+
+// QUESTION: What user roles do you need?
+// Consider: admin, operator, analyst, viewer
+enum UserRole {
+  // TODO: Add your user role values
+}
+
+// TIP: Use descriptive enum values that clearly indicate their purpose
+// TIP: Consider the order of enum values - they might be used for sorting
+// TIP: Think about what combinations make sense for your business logic 

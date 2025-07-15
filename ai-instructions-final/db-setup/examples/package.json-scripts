@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev",
+    "lint": "next lint",
+    "start": "next start",
+    "db:generate": "prisma generate --schema=db/schemas",
+    "db:migrate": "prisma migrate dev --schema=db/schemas",
+    "db:clean": "tsx db/seeds/db-clean.ts",
+    "db:seed": "tsx db/seeds/db-seed.ts",
+    "db:studio": "prisma studio --schema=db/schemas"
+  }
+} 

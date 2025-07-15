@@ -1,0 +1,78 @@
+// ============================================================================
+// COMMON ENUMS AND TYPES
+// ============================================================================
+
+enum AgentStatus {
+  ACTIVE
+  STANDBY
+  TRAINING
+  COMPROMISED
+  DECEASED
+}
+
+enum RiskLevel {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum OperationStatus {
+  PLANNING
+  ACTIVE
+  COMPLETED
+  COMPROMISED
+  ABORTED
+}
+
+enum PriorityLevel {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum ClassificationLevel {
+  TOP_SECRET
+  SECRET
+  CONFIDENTIAL
+  UNCLASSIFIED
+}
+
+enum IntelligenceSource {
+  SIGINT
+  HUMINT
+  OSINT
+  DIPLOMATIC
+  TECHNICAL
+}
+
+enum ReportStatus {
+  VERIFIED
+  PENDING
+  ACTIVE
+  ARCHIVED
+}
+
+enum SystemStatus {
+  ONLINE
+  WARNING
+  MAINTENANCE
+  OFFLINE
+}
+
+enum SystemType {
+  PRIMARY_SERVER
+  DATABASE
+  FIREWALL
+  NETWORK
+  STORAGE
+  PROCESSING
+}
+
+enum UserRole {
+  ADMIN
+  OPERATOR
+  ANALYST
+  VIEWER
+}

@@ -1,0 +1,19 @@
+// ============================================================================
+// SYSTEM MODELS
+// ============================================================================
+
+model System {
+  id        String       @id
+  name      String
+  type      SystemType
+  status    SystemStatus @default(ONLINE)
+  health    Int          @default(100)
+  cpu       Int          @default(0)
+  memory    Int          @default(0)
+  storage   Int          @default(0)
+  uptime    String       @default("0 days")
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@map("systems")
+}
