@@ -18,6 +18,9 @@ ai-instructions-final/
 ├── frontend-setup/
 │   ├── ai-instructions.md     # Frontend component development
 │   └── examples/              # UI component examples
+├── frontend-setup-1/
+│   ├── ai-instructions.md     # API integration & data management
+│   └── examples/              # Data fetching & form examples
 └── design-system/
     ├── ai-instructions.md     # Design system and styling
     └── examples/              # Design tokens and examples
@@ -61,7 +64,14 @@ ai-instructions-final/
    - Implement navigation and layouts
    - Add data visualization and forms
 
-5. **Design System** (`design-system/ai-instructions.md`)
+5. **Frontend Setup - API Integration** (`frontend-setup-1/ai-instructions.md`)
+
+   - Implement data fetching with SWR
+   - Handle authentication and API calls
+   - Manage loading states and error handling
+   - Create forms with API integration
+
+6. **Design System** (`design-system/ai-instructions.md`)
    - Implement the cyberpunk theme
    - Set up Tailwind CSS configuration
    - Create consistent styling patterns
