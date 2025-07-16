@@ -57,8 +57,8 @@ export default function LoginPage() {
       // Use the auth hook to store authentication data
       login(data.data.token, data.data.user);
 
-      // Redirect to dashboard
-      router.push("/");
+      // Redirect to prototype dashboard
+      router.push("/prototype");
     } catch (err) {
       setError(err instanceof Error ? err.message : "An unexpected error occurred");
     } finally {

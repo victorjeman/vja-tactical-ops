@@ -1,126 +1,96 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Search, FileText, Eye, Download, Filter, Globe, Shield, AlertTriangle } from "lucide-react"
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Search, FileText, Eye, Download, Filter, Globe, Shield, AlertTriangle } from "lucide-react";
+import { useIntelligenceList, type IntelligenceReport, type IntelligenceListQueryParams } from "@/features";
 
 export default function IntelligencePage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedReport, setSelectedReport] = useState(null)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedReport, setSelectedReport] = useState<IntelligenceReport | null>(null);
+  const [queryParams, setQueryParams] = useState<IntelligenceListQueryParams>({
+    page: 1,
+    limit: 10,
+    search: "",
+  });
 
-  const reports = [
-    {
-      id: "INT-2025-001",
-      title: "CYBERCRIME NETWORK ANALYSIS",
-      classification: "TOP SECRET",
-      source: "SIGINT",
-      location: "Eastern Europe",
-      date: "2025-06-17",
-      status: "verified",
-      threat: "high",
-      summary: "Detailed analysis of emerging cybercrime syndicate operating across multiple jurisdictions",
-      tags: ["cybercrime", "international", "financial"],
-    },
-    {
-      id: "INT-2025-002",
-      title: "ROGUE AGENT COMMUNICATIONS",
-      classification: "SECRET",
-      source: "HUMINT",
-      location: "Berlin",
-      date: "2025-06-16",
-      status: "pending",
-      threat: "critical",
-      summary: "Intercepted communications suggesting potential security breach in European operations",
-      tags: ["internal", "security", "communications"],
-    },
-    {
-      id: "INT-2025-003",
-      title: "ARMS TRAFFICKING ROUTES",
-      classification: "CONFIDENTIAL",
-      source: "OSINT",
-      location: "Middle East",
-      date: "2025-06-15",
-      status: "verified",
-      threat: "medium",
-      summary: "Updated intelligence on weapons smuggling corridors through Mediterranean region",
-      tags: ["trafficking", "weapons", "maritime"],
-    },
-    {
-      id: "INT-2025-004",
-      title: "TERRORIST CELL SURVEILLANCE",
-      classification: "TOP SECRET",
-      source: "HUMINT",
-      location: "North Africa",
-      date: "2025-06-14",
-      status: "active",
-      threat: "critical",
-      summary: "Ongoing surveillance of suspected terrorist cell planning coordinated attacks",
-      tags: ["terrorism", "surveillance", "coordinated"],
-    },
-    {
-      id: "INT-2025-005",
-      title: "DIPLOMATIC INTELLIGENCE BRIEF",
-      classification: "SECRET",
-      source: "DIPLOMATIC",
-      location: "Asia Pacific",
-      date: "2025-06-13",
-      status: "verified",
-      threat: "low",
-      summary: "Political developments affecting regional security and operational considerations",
-      tags: ["diplomatic", "political", "regional"],
-    },
-  ]
+  // Fetch intelligence reports using the new hook
+  const { data: reports, isLoading, error, pagination } = useIntelligenceList(queryParams);
 
-  const getClassificationColor = (classification) => {
+  if (isLoading) {
+    return (
+      <div className="p-6 space-y-6">
+        <div className="animate-pulse">
+          <div className="h-8 bg-neutral-800 rounded w-1/4 mb-6"></div>
+          <div className="space-y-4">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="h-24 bg-neutral-800 rounded"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6">
+        <div className="text-red-500">Error loading intelligence reports: {error}</div>
+      </div>
+    );
+  }
+
+  const getClassificationColor = (classification: IntelligenceReport["classification"]) => {
     switch (classification) {
-      case "TOP SECRET":
-        return "bg-red-500/20 text-red-500"
+      case "TOP_SECRET":
+        return "bg-red-500/20 text-red-500";
       case "SECRET":
-        return "bg-orange-500/20 text-orange-500"
+        return "bg-orange-500/20 text-orange-500";
       case "CONFIDENTIAL":
-        return "bg-neutral-500/20 text-neutral-300"
+        return "bg-neutral-500/20 text-neutral-300";
       default:
-        return "bg-white/20 text-white"
+        return "bg-white/20 text-white";
     }
-  }
+  };
 
-  const getThreatColor = (threat) => {
+  const getThreatColor = (threat: IntelligenceReport["threatLevel"]) => {
     switch (threat) {
-      case "critical":
-        return "bg-red-500/20 text-red-500"
-      case "high":
-        return "bg-orange-500/20 text-orange-500"
-      case "medium":
-        return "bg-neutral-500/20 text-neutral-300"
-      case "low":
-        return "bg-white/20 text-white"
+      case "CRITICAL":
+        return "bg-red-500/20 text-red-500";
+      case "HIGH":
+        return "bg-orange-500/20 text-orange-500";
+      case "MEDIUM":
+        return "bg-neutral-500/20 text-neutral-300";
+      case "LOW":
+        return "bg-white/20 text-white";
       default:
-        return "bg-neutral-500/20 text-neutral-300"
+        return "bg-neutral-500/20 text-neutral-300";
     }
-  }
+  };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: IntelligenceReport["status"]) => {
     switch (status) {
-      case "verified":
-        return "bg-white/20 text-white"
-      case "pending":
-        return "bg-orange-500/20 text-orange-500"
-      case "active":
-        return "bg-white/20 text-white"
+      case "VERIFIED":
+        return "bg-white/20 text-white";
+      case "PENDING":
+        return "bg-orange-500/20 text-orange-500";
+      case "ACTIVE":
+        return "bg-white/20 text-white";
       default:
-        return "bg-neutral-500/20 text-neutral-300"
+        return "bg-neutral-500/20 text-neutral-300";
     }
-  }
+  };
 
-  const filteredReports = reports.filter(
-    (report) =>
-      report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase())),
-  )
+  const filteredReports =
+    reports?.filter(
+      (report) =>
+        report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        report.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        report.tags.toLowerCase().includes(searchTerm.toLowerCase())
+    ) || [];
 
   return (
     <div className="p-6 space-y-6">
@@ -195,7 +165,9 @@ export default function IntelligencePage() {
       {/* Intelligence Reports */}
       <Card className="bg-neutral-900 border-neutral-700">
         <CardHeader>
-          <CardTitle className="text-sm font-medium text-neutral-300 tracking-wider">INTELLIGENCE REPORTS</CardTitle>
+          <CardTitle className="text-sm font-medium text-neutral-300 tracking-wider">
+            INTELLIGENCE REPORTS
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -215,12 +187,12 @@ export default function IntelligencePage() {
                       </div>
                     </div>
 
-                    <p className="text-sm text-neutral-300 ml-8">{report.summary}</p>
+                    <p className="text-sm text-neutral-300 ml-8">{report.content}</p>
 
                     <div className="flex flex-wrap gap-2 ml-8">
-                      {report.tags.map((tag) => (
-                        <Badge key={tag} className="bg-neutral-800 text-neutral-300 text-xs">
-                          {tag}
+                      {report.tags.split(",").map((tag) => (
+                        <Badge key={tag.trim()} className="bg-neutral-800 text-neutral-300 text-xs">
+                          {tag.trim()}
                         </Badge>
                       ))}
                     </div>
@@ -228,8 +200,10 @@ export default function IntelligencePage() {
 
                   <div className="flex flex-col sm:items-end gap-2">
                     <div className="flex flex-wrap gap-2">
-                      <Badge className={getClassificationColor(report.classification)}>{report.classification}</Badge>
-                      <Badge className={getThreatColor(report.threat)}>{report.threat.toUpperCase()}</Badge>
+                      <Badge className={getClassificationColor(report.classification)}>
+                        {report.classification}
+                      </Badge>
+                      <Badge className={getThreatColor(report.threatLevel)}>{report.threatLevel}</Badge>
                       <Badge className={getStatusColor(report.status)}>{report.status.toUpperCase()}</Badge>
                     </div>
 
@@ -242,7 +216,7 @@ export default function IntelligencePage() {
                         <Shield className="w-3 h-3" />
                         <span>{report.source}</span>
                       </div>
-                      <div className="font-mono">{report.date}</div>
+                      <div className="font-mono">{report.createdAt}</div>
                     </div>
                   </div>
                 </div>
@@ -258,7 +232,9 @@ export default function IntelligencePage() {
           <Card className="bg-neutral-900 border-neutral-700 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
-                <CardTitle className="text-xl font-bold text-white tracking-wider">{selectedReport.title}</CardTitle>
+                <CardTitle className="text-xl font-bold text-white tracking-wider">
+                  {selectedReport.title}
+                </CardTitle>
                 <p className="text-sm text-neutral-400 font-mono">{selectedReport.id}</p>
               </div>
               <Button
@@ -273,19 +249,23 @@ export default function IntelligencePage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-sm font-medium text-neutral-300 tracking-wider mb-2">CLASSIFICATION</h3>
+                    <h3 className="text-sm font-medium text-neutral-300 tracking-wider mb-2">
+                      CLASSIFICATION
+                    </h3>
                     <div className="flex gap-2">
                       <Badge className={getClassificationColor(selectedReport.classification)}>
                         {selectedReport.classification}
                       </Badge>
-                      <Badge className={getThreatColor(selectedReport.threat)}>
-                        THREAT: {selectedReport.threat.toUpperCase()}
+                      <Badge className={getThreatColor(selectedReport.threatLevel)}>
+                        THREAT: {selectedReport.threatLevel}
                       </Badge>
                     </div>
                   </div>
 
                   <div>
-                    <h3 className="text-sm font-medium text-neutral-300 tracking-wider mb-2">SOURCE DETAILS</h3>
+                    <h3 className="text-sm font-medium text-neutral-300 tracking-wider mb-2">
+                      SOURCE DETAILS
+                    </h3>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-neutral-400">Source Type:</span>
@@ -297,7 +277,7 @@ export default function IntelligencePage() {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-neutral-400">Date:</span>
-                        <span className="text-white font-mono">{selectedReport.date}</span>
+                        <span className="text-white font-mono">{selectedReport.createdAt}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-neutral-400">Status:</span>
@@ -313,33 +293,35 @@ export default function IntelligencePage() {
                   <div>
                     <h3 className="text-sm font-medium text-neutral-300 tracking-wider mb-2">TAGS</h3>
                     <div className="flex flex-wrap gap-2">
-                      {selectedReport.tags.map((tag) => (
-                        <Badge key={tag} className="bg-neutral-800 text-neutral-300">
-                          {tag}
+                      {selectedReport.tags.split(",").map((tag: string) => (
+                        <Badge key={tag.trim()} className="bg-neutral-800 text-neutral-300">
+                          {tag.trim()}
                         </Badge>
                       ))}
                     </div>
                   </div>
 
                   <div>
-                    <h3 className="text-sm font-medium text-neutral-300 tracking-wider mb-2">THREAT ASSESSMENT</h3>
+                    <h3 className="text-sm font-medium text-neutral-300 tracking-wider mb-2">
+                      THREAT ASSESSMENT
+                    </h3>
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span className="text-neutral-400">Threat Level</span>
-                        <Badge className={getThreatColor(selectedReport.threat)}>
-                          {selectedReport.threat.toUpperCase()}
+                        <Badge className={getThreatColor(selectedReport.threatLevel)}>
+                          {selectedReport.threatLevel}
                         </Badge>
                       </div>
                       <div className="w-full bg-neutral-800 rounded-full h-2">
                         <div
                           className={`h-2 rounded-full transition-all duration-300 ${
-                            selectedReport.threat === "critical"
+                            selectedReport.threatLevel === "CRITICAL"
                               ? "bg-red-500 w-full"
-                              : selectedReport.threat === "high"
-                                ? "bg-orange-500 w-3/4"
-                                : selectedReport.threat === "medium"
-                                  ? "bg-neutral-400 w-1/2"
-                                  : "bg-white w-1/4"
+                              : selectedReport.threatLevel === "HIGH"
+                              ? "bg-orange-500 w-3/4"
+                              : selectedReport.threatLevel === "MEDIUM"
+                              ? "bg-neutral-400 w-1/2"
+                              : "bg-white w-1/4"
                           }`}
                         ></div>
                       </div>
@@ -349,8 +331,10 @@ export default function IntelligencePage() {
               </div>
 
               <div>
-                <h3 className="text-sm font-medium text-neutral-300 tracking-wider mb-2">EXECUTIVE SUMMARY</h3>
-                <p className="text-sm text-neutral-300 leading-relaxed">{selectedReport.summary}</p>
+                <h3 className="text-sm font-medium text-neutral-300 tracking-wider mb-2">
+                  EXECUTIVE SUMMARY
+                </h3>
+                <p className="text-sm text-neutral-300 leading-relaxed">{selectedReport.content}</p>
               </div>
 
               <div className="flex gap-2 pt-4 border-t border-neutral-700">
@@ -377,5 +361,5 @@ export default function IntelligencePage() {
         </div>
       )}
     </div>
-  )
+  );
 }

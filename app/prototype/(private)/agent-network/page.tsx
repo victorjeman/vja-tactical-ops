@@ -1,95 +1,37 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Search, Filter, MoreHorizontal, MapPin, Clock, Shield } from "lucide-react"
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Search, Filter, MoreHorizontal, MapPin, Clock, Shield } from "lucide-react";
+import { useAgentList, type Agent, type AgentListQueryParams } from "@/features";
 
 export default function AgentNetworkPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedAgent, setSelectedAgent] = useState(null)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
+  const [queryParams, setQueryParams] = useState<AgentListQueryParams>({
+    page: 1,
+    limit: 10,
+    search: "",
+  });
 
-  const agents = [
-    {
-      id: "G-078W",
-      name: "VENGEFUL SPIRIT",
-      status: "active",
-      location: "Berlin",
-      lastSeen: "2 min ago",
-      missions: 47,
-      risk: "high",
-    },
-    {
-      id: "G-079X",
-      name: "OBSIDIAN SENTINEL",
-      status: "standby",
-      location: "Tokyo",
-      lastSeen: "15 min ago",
-      missions: 32,
-      risk: "medium",
-    },
-    {
-      id: "G-080Y",
-      name: "GHOSTLY FURY",
-      status: "active",
-      location: "Cairo",
-      lastSeen: "1 min ago",
-      missions: 63,
-      risk: "high",
-    },
-    {
-      id: "G-081Z",
-      name: "CURSED REVENANT",
-      status: "compromised",
-      location: "Moscow",
-      lastSeen: "3 hours ago",
-      missions: 28,
-      risk: "critical",
-    },
-    {
-      id: "G-082A",
-      name: "VENOMOUS SHADE",
-      status: "active",
-      location: "London",
-      lastSeen: "5 min ago",
-      missions: 41,
-      risk: "medium",
-    },
-    {
-      id: "G-083B",
-      name: "MYSTIC ENIGMA",
-      status: "training",
-      location: "Base Alpha",
-      lastSeen: "1 day ago",
-      missions: 12,
-      risk: "low",
-    },
-    {
-      id: "G-084C",
-      name: "WRAITH AVENGER",
-      status: "active",
-      location: "Paris",
-      lastSeen: "8 min ago",
-      missions: 55,
-      risk: "high",
-    },
-    {
-      id: "G-085D",
-      name: "SPECTRAL FURY",
-      status: "standby",
-      location: "Sydney",
-      lastSeen: "22 min ago",
-      missions: 38,
-      risk: "medium",
-    },
-  ]
+  // Fetch agents using the new hook
+  const { data: agents, isLoading, error, pagination } = useAgentList(queryParams);
 
-  const filteredAgents = agents.filter(
-    (agent) =>
-      agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      agent.id.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+  // Update search when searchTerm changes
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+    setQueryParams((prev) => ({ ...prev, search: value }));
+  };
+
+  // Filter agents based on search term (client-side filtering for demo)
+  const filteredAgents =
+    agents?.filter(
+      (agent) =>
+        agent.codename.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        agent.id.toLowerCase().includes(searchTerm.toLowerCase())
+    ) || [];
 
   return (
     <div className="p-6 space-y-6">
@@ -117,7 +59,7 @@ export default function AgentNetworkPage() {
               <Input
                 placeholder="Search agents..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 className="pl-10 bg-neutral-800 border-neutral-600 text-white placeholder-neutral-400"
               />
             </div>
@@ -171,14 +113,30 @@ export default function AgentNetworkPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-neutral-700">
-                  <th className="text-left py-3 px-4 text-xs font-medium text-neutral-400 tracking-wider">AGENT ID</th>
-                  <th className="text-left py-3 px-4 text-xs font-medium text-neutral-400 tracking-wider">CODENAME</th>
-                  <th className="text-left py-3 px-4 text-xs font-medium text-neutral-400 tracking-wider">STATUS</th>
-                  <th className="text-left py-3 px-4 text-xs font-medium text-neutral-400 tracking-wider">LOCATION</th>
-                  <th className="text-left py-3 px-4 text-xs font-medium text-neutral-400 tracking-wider">LAST SEEN</th>
-                  <th className="text-left py-3 px-4 text-xs font-medium text-neutral-400 tracking-wider">MISSIONS</th>
-                  <th className="text-left py-3 px-4 text-xs font-medium text-neutral-400 tracking-wider">RISK</th>
-                  <th className="text-left py-3 px-4 text-xs font-medium text-neutral-400 tracking-wider">ACTIONS</th>
+                  <th className="text-left py-3 px-4 text-xs font-medium text-neutral-400 tracking-wider">
+                    AGENT ID
+                  </th>
+                  <th className="text-left py-3 px-4 text-xs font-medium text-neutral-400 tracking-wider">
+                    CODENAME
+                  </th>
+                  <th className="text-left py-3 px-4 text-xs font-medium text-neutral-400 tracking-wider">
+                    STATUS
+                  </th>
+                  <th className="text-left py-3 px-4 text-xs font-medium text-neutral-400 tracking-wider">
+                    LOCATION
+                  </th>
+                  <th className="text-left py-3 px-4 text-xs font-medium text-neutral-400 tracking-wider">
+                    LAST SEEN
+                  </th>
+                  <th className="text-left py-3 px-4 text-xs font-medium text-neutral-400 tracking-wider">
+                    MISSIONS
+                  </th>
+                  <th className="text-left py-3 px-4 text-xs font-medium text-neutral-400 tracking-wider">
+                    RISK
+                  </th>
+                  <th className="text-left py-3 px-4 text-xs font-medium text-neutral-400 tracking-wider">
+                    ACTIONS
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -191,21 +149,23 @@ export default function AgentNetworkPage() {
                     onClick={() => setSelectedAgent(agent)}
                   >
                     <td className="py-3 px-4 text-sm text-white font-mono">{agent.id}</td>
-                    <td className="py-3 px-4 text-sm text-white">{agent.name}</td>
+                    <td className="py-3 px-4 text-sm text-white">{agent.codename}</td>
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-2">
                         <div
                           className={`w-2 h-2 rounded-full ${
-                            agent.status === "active"
+                            agent.status === "ACTIVE"
                               ? "bg-white"
-                              : agent.status === "standby"
-                                ? "bg-neutral-500"
-                                : agent.status === "training"
-                                  ? "bg-orange-500"
-                                  : "bg-red-500"
+                              : agent.status === "STANDBY"
+                              ? "bg-neutral-500"
+                              : agent.status === "TRAINING"
+                              ? "bg-orange-500"
+                              : "bg-red-500"
                           }`}
                         ></div>
-                        <span className="text-xs text-neutral-300 uppercase tracking-wider">{agent.status}</span>
+                        <span className="text-xs text-neutral-300 uppercase tracking-wider">
+                          {agent.status}
+                        </span>
                       </div>
                     </td>
                     <td className="py-3 px-4">
@@ -217,23 +177,25 @@ export default function AgentNetworkPage() {
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-2">
                         <Clock className="w-3 h-3 text-neutral-400" />
-                        <span className="text-sm text-neutral-300 font-mono">{agent.lastSeen}</span>
+                        <span className="text-sm text-neutral-300 font-mono">
+                          {agent.lastSeen || "Unknown"}
+                        </span>
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-sm text-white font-mono">{agent.missions}</td>
+                    <td className="py-3 px-4 text-sm text-white font-mono">{agent.missionsCompleted}</td>
                     <td className="py-3 px-4">
                       <span
                         className={`text-xs px-2 py-1 rounded uppercase tracking-wider ${
-                          agent.risk === "critical"
+                          agent.riskLevel === "CRITICAL"
                             ? "bg-red-500/20 text-red-500"
-                            : agent.risk === "high"
-                              ? "bg-orange-500/20 text-orange-500"
-                              : agent.risk === "medium"
-                                ? "bg-neutral-500/20 text-neutral-300"
-                                : "bg-white/20 text-white"
+                            : agent.riskLevel === "HIGH"
+                            ? "bg-orange-500/20 text-orange-500"
+                            : agent.riskLevel === "MEDIUM"
+                            ? "bg-neutral-500/20 text-neutral-300"
+                            : "bg-white/20 text-white"
                         }`}
                       >
-                        {agent.risk}
+                        {agent.riskLevel}
                       </span>
                     </td>
                     <td className="py-3 px-4">
@@ -255,7 +217,9 @@ export default function AgentNetworkPage() {
           <Card className="bg-neutral-900 border-neutral-700 w-full max-w-2xl">
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
-                <CardTitle className="text-lg font-bold text-white tracking-wider">{selectedAgent.name}</CardTitle>
+                <CardTitle className="text-lg font-bold text-white tracking-wider">
+                  {selectedAgent.codename}
+                </CardTitle>
                 <p className="text-sm text-neutral-400 font-mono">{selectedAgent.id}</p>
               </div>
               <Button
@@ -273,16 +237,18 @@ export default function AgentNetworkPage() {
                   <div className="flex items-center gap-2">
                     <div
                       className={`w-2 h-2 rounded-full ${
-                        selectedAgent.status === "active"
+                        selectedAgent.status === "ACTIVE"
                           ? "bg-white"
-                          : selectedAgent.status === "standby"
-                            ? "bg-neutral-500"
-                            : selectedAgent.status === "training"
-                              ? "bg-orange-500"
-                              : "bg-red-500"
+                          : selectedAgent.status === "STANDBY"
+                          ? "bg-neutral-500"
+                          : selectedAgent.status === "TRAINING"
+                          ? "bg-orange-500"
+                          : "bg-red-500"
                       }`}
                     ></div>
-                    <span className="text-sm text-white uppercase tracking-wider">{selectedAgent.status}</span>
+                    <span className="text-sm text-white uppercase tracking-wider">
+                      {selectedAgent.status}
+                    </span>
                   </div>
                 </div>
                 <div>
@@ -291,22 +257,22 @@ export default function AgentNetworkPage() {
                 </div>
                 <div>
                   <p className="text-xs text-neutral-400 tracking-wider mb-1">MISSIONS COMPLETED</p>
-                  <p className="text-sm text-white font-mono">{selectedAgent.missions}</p>
+                  <p className="text-sm text-white font-mono">{selectedAgent.missionsCompleted}</p>
                 </div>
                 <div>
                   <p className="text-xs text-neutral-400 tracking-wider mb-1">RISK LEVEL</p>
                   <span
                     className={`text-xs px-2 py-1 rounded uppercase tracking-wider ${
-                      selectedAgent.risk === "critical"
+                      selectedAgent.riskLevel === "CRITICAL"
                         ? "bg-red-500/20 text-red-500"
-                        : selectedAgent.risk === "high"
-                          ? "bg-orange-500/20 text-orange-500"
-                          : selectedAgent.risk === "medium"
-                            ? "bg-neutral-500/20 text-neutral-300"
-                            : "bg-white/20 text-white"
+                        : selectedAgent.riskLevel === "HIGH"
+                        ? "bg-orange-500/20 text-orange-500"
+                        : selectedAgent.riskLevel === "MEDIUM"
+                        ? "bg-neutral-500/20 text-neutral-300"
+                        : "bg-white/20 text-white"
                     }`}
                   >
-                    {selectedAgent.risk}
+                    {selectedAgent.riskLevel}
                   </span>
                 </div>
               </div>
@@ -330,5 +296,5 @@ export default function AgentNetworkPage() {
         </div>
       )}
     </div>
-  )
+  );
 }
