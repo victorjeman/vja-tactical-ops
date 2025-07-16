@@ -1,17 +1,38 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronRight, Monitor, Settings, Shield, Target, Users, Bell, RefreshCw } from "lucide-react";
+import {
+  ChevronRight,
+  Monitor,
+  Settings,
+  Shield,
+  Target,
+  Users,
+  Bell,
+  RefreshCw,
+  LogOut,
+  User,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import CommandCenterPage from "./(design)/command-center/page";
-import AgentNetworkPage from "./(design)/agent-network/page";
-import OperationsPage from "./(design)/operations/page";
-import IntelligencePage from "./(design)/intelligence/page";
-import SystemsPage from "./(design)/systems/page";
+import { AuthGuard } from "@/components/auth-guard";
+import { useAuth } from "@/hooks/use-auth";
+import { useRouter } from "next/navigation";
+import CommandCenterPage from "./design/command-center/page";
+import AgentNetworkPage from "./design/agent-network/page";
+import OperationsPage from "./design/operations/page";
+import IntelligencePage from "./design/intelligence/page";
+import SystemsPage from "./design/systems/page";
 
-export default function TacticalDashboard() {
+function TacticalDashboard() {
   const [activeSection, setActiveSection] = useState("overview");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const { user, logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout();
+    router.push("/prototype/login");
+  };
 
   return (
     <div className="flex h-screen">
@@ -99,12 +120,32 @@ export default function TacticalDashboard() {
 
           <div className="flex items-center gap-4">
             <div className="text-xs text-neutral-500">LAST UPDATE: 05/06/2025 20:00 UTC</div>
+
+            {/* User Info */}
+            {user && (
+              <div className="flex items-center gap-2 text-xs text-neutral-400">
+                <User className="w-3 h-3" />
+                <span>{user.username}</span>
+                <span className="text-orange-500">({user.role})</span>
+              </div>
+            )}
+
             <Button variant="ghost" size="icon" className="text-neutral-400 hover:text-orange-500">
               <Bell className="w-4 h-4" />
             </Button>
 
             <Button variant="ghost" size="icon" className="text-neutral-400 hover:text-orange-500">
               <RefreshCw className="w-4 h-4" />
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleLogout}
+              className="text-neutral-400 hover:text-red-500"
+              title="Logout"
+            >
+              <LogOut className="w-4 h-4" />
             </Button>
           </div>
         </div>
@@ -119,5 +160,13 @@ export default function TacticalDashboard() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ProtectedTacticalDashboard() {
+  return (
+    <AuthGuard>
+      <TacticalDashboard />
+    </AuthGuard>
   );
 }

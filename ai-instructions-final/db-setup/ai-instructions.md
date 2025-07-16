@@ -2,7 +2,8 @@
 
 ## Overview
 
-Set up the database layer for the Tactical Operations Dashboard using Prisma ORM. The database should support multi-file schema organization for better maintainability and should include all necessary models for the tactical operations system.
+- Set up the database layer for the Tactical Operations Dashboard using Prisma ORM.
+- The database should support multi-file schema organization for better maintainability and should include all necessary models for the tactical operations system.
 
 ## Technology Requirements
 
@@ -104,11 +105,13 @@ Create the necessary directories for database organization:
 
 ### 3. Schema Configuration
 
-Set up the main schema file with generator and datasource configuration. Configure the multi-file schema approach to automatically read all `.prisma` files in the schemas directory.
+- Set up the main schema file with generator and datasource configuration.
+- Configure the multi-file schema approach to automatically read all `.prisma` files in the schemas directory.
 
 ### 4. Model Implementation
 
-Implement each model with appropriate fields, relationships, and constraints. Ensure proper foreign key relationships and cascade delete behavior where appropriate.
+- Implement each model with appropriate fields, relationships, and constraints.
+- Ensure proper foreign key relationships and cascade delete behavior where appropriate.
 
 ### 5. Database Client
 
@@ -116,7 +119,8 @@ Create a utility file for the Prisma client that handles global instance managem
 
 ### 6. Seed Data Structure
 
-Design a modular seeding system with separate files for each entity type. Include a main orchestrator that handles dependencies and a cleanup utility for development.
+- Design a modular seeding system with separate files for each entity type.
+- Include a main orchestrator that handles dependencies and a cleanup utility for development.
 
 ### 7. Package Scripts
 
@@ -155,6 +159,20 @@ Create realistic sample data for testing and development:
 
 Ensure seed data respects entity relationships and dependencies. Clear existing data before seeding to avoid conflicts.
 
+### User Authentication and Seed Data
+
+When creating seed data for users, it's crucial to implement proper password hashing and maintain a record of test credentials for development and testing purposes.
+
+**Password Security**: Always hash passwords using bcrypt or a similar secure hashing algorithm. Never store plain text passwords in the database, even for seed data.
+
+**Test Credentials Documentation**: Create a separate documentation file or README section that lists the test user credentials created during seeding. This should include email addresses, usernames, roles, and the corresponding plain text passwords used during development.
+
+**Development Workflow**: When implementing the frontend authentication system, you'll need these test credentials to log in and test the application. Store this information in a development-specific location that won't be committed to version control.
+
+**Session Management**: The seed data should also create some initial session tokens for testing purposes. These tokens can be used to test protected API endpoints without going through the login process each time.
+
+**Role-Based Testing**: Ensure you create users with different roles (Admin, Operator, Analyst, Viewer) so you can test role-based access control throughout the application.
+
 ## Validation Requirements
 
 After implementation, verify:
@@ -166,6 +184,8 @@ After implementation, verify:
 - All database scripts function properly
 - Relationships work as expected
 - Sample data is accessible and realistic
+- User passwords are properly hashed
+- Test credentials are documented for development use
 
 ## File Structure
 
@@ -177,15 +197,7 @@ The final structure should include:
 - Database utility functions
 - Migration history
 - Development database file
-
-## Next Steps
-
-Once the database setup is complete, proceed to:
-
-1. API Layer Implementation
-2. Frontend Component Development
-3. Authentication System
-4. Real-time Features
+- Documentation of test user credentials
 
 ## Notes
 
@@ -194,3 +206,5 @@ Once the database setup is complete, proceed to:
 - Implement proper constraints and validation
 - Ensure data integrity through foreign key relationships
 - Plan for future scalability and maintenance
+- Always hash passwords securely in seed data
+- Document test credentials for development workflow

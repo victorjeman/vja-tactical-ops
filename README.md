@@ -29,7 +29,7 @@ Students will participate in a workshop focused on **converting a prototype into
 
 ### What's Already Built
 
-- **Prototype Pages**: Complete UI mockups in `/app/(design)/`
+- **Prototype Pages**: Complete UI mockups in `/app/design/`
 - **Project Structure**: Next.js 14 with TypeScript, Tailwind CSS, shadcn/ui
 - **Database Schema**: Prisma schema with SQLite
 - **Design System**: Comprehensive UI component library

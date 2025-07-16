@@ -1,49 +1,102 @@
 import { prisma } from "./db-seed-common";
+import bcrypt from "bcryptjs";
+import fs from "fs";
+import path from "path";
+
+// User credentials for development
+const USER_CREDENTIALS = [
+  {
+    email: "commander@tactical-ops.com",
+    username: "COMMANDER_ALPHA",
+    password: "Commander2025!",
+    role: "ADMIN" as const,
+    displayName: "Commander Alpha",
+  },
+  {
+    email: "analyst@tactical-ops.com",
+    username: "INTEL_ANALYST",
+    password: "Analyst2025!",
+    role: "ANALYST" as const,
+    displayName: "Intel Analyst",
+  },
+  {
+    email: "operator@tactical-ops.com",
+    username: "FIELD_OPERATOR",
+    password: "Operator2025!",
+    role: "OPERATOR" as const,
+    displayName: "Field Operator",
+  },
+  {
+    email: "viewer@tactical-ops.com",
+    username: "INTEL_VIEWER",
+    password: "Viewer2025!",
+    role: "VIEWER" as const,
+    displayName: "Intel Viewer",
+  },
+];
+
+// Generate constants file content
+function generateConstantsFile() {
+  const constantsContent = `// ============================================================================
+// DEVELOPMENT USER CREDENTIALS
+// ============================================================================
+// This file is auto-generated during database seeding.
+// Use these credentials for development and testing purposes only.
+
+export const DEV_USER_CREDENTIALS = ${JSON.stringify(USER_CREDENTIALS, null, 2)} as const;
+
+export type DevUserRole = typeof DEV_USER_CREDENTIALS[number]['role'];
+
+export interface DevUser {
+  email: string;
+  username: string;
+  password: string;
+  role: DevUserRole;
+  displayName: string;
+}
+
+// Helper function to get user by role
+export function getDevUserByRole(role: DevUserRole): DevUser | undefined {
+  return DEV_USER_CREDENTIALS.find(user => user.role === role);
+}
+
+// Helper function to get user by email
+export function getDevUserByEmail(email: string): DevUser | undefined {
+  return DEV_USER_CREDENTIALS.find(user => user.email === email);
+}
+`;
+
+  // Write to lib/constants.ts
+  const constantsPath = path.join(process.cwd(), "lib", "constants.ts");
+  fs.writeFileSync(constantsPath, constantsContent);
+  console.log("📝 Generated constants file at lib/constants.ts");
+}
 
 export async function seedUsers() {
   console.log("👤 Seeding users...");
 
-  // Create sample users
-  const users = await Promise.all([
-    prisma.user.create({
-      data: {
-        email: "commander@tactical-ops.com",
-        username: "COMMANDER_ALPHA",
-        password: "$2b$10$hashed_password_here", // In real app, use proper hashing
-        role: "ADMIN",
-        isActive: true,
-      },
-    }),
-    prisma.user.create({
-      data: {
-        email: "analyst@tactical-ops.com",
-        username: "INTEL_ANALYST",
-        password: "$2b$10$hashed_password_here", // In real app, use proper hashing
-        role: "ANALYST",
-        isActive: true,
-      },
-    }),
-    prisma.user.create({
-      data: {
-        email: "operator@tactical-ops.com",
-        username: "FIELD_OPERATOR",
-        password: "$2b$10$hashed_password_here", // In real app, use proper hashing
-        role: "OPERATOR",
-        isActive: true,
-      },
-    }),
-    prisma.user.create({
-      data: {
-        email: "viewer@tactical-ops.com",
-        username: "INTEL_VIEWER",
-        password: "$2b$10$hashed_password_here", // In real app, use proper hashing
-        role: "VIEWER",
-        isActive: true,
-      },
-    }),
-  ]);
+  // Generate constants file first
+  generateConstantsFile();
 
-  console.log(`✅ Created ${users.length} users`);
+  // Create sample users with properly hashed passwords
+  const users = await Promise.all(
+    USER_CREDENTIALS.map(async (userCred) => {
+      const hashedPassword = await bcrypt.hash(userCred.password, 12);
+
+      return prisma.user.create({
+        data: {
+          email: userCred.email,
+          username: userCred.username,
+          password: hashedPassword,
+          role: userCred.role,
+          isActive: true,
+        },
+      });
+    })
+  );
+
+  console.log(`✅ Created ${users.length} users with hashed passwords`);
+  console.log("📋 User credentials saved to lib/constants.ts for development use");
   return users;
 }
 
